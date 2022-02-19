@@ -1,0 +1,62 @@
+[agent]
+  omit_hostname = true
+
+[global_tags]
+  network = "mynet 02/18"
+  node = "node 01"
+
+[[inputs.tail]]
+  files = ["/logs/sn_node.log", "/logs/sn_node.log.*"]
+  from_beginning = true
+  # watch_method = "inotify"
+  # max_undelivered_lines = 1000
+  # character_encoding = ""
+  data_format = "grok"
+  path_tag = ""
+  grok_patterns = ["%{HEADER_LINE}"]
+  # %{TIMESTAMP:ts:timestamp} \[%{DATA}\]:
+  # -"2006-01-02 15:04:05.000000"
+  # -"2006-01-02 15:04:05.000"
+  # \[%{NOTSPACE}\]:
+  grok_custom_patterns = '''
+HEADER_LINE %{LOGLEVEL} %{TIMESTAMP_SN:timestamp:ts-"2006-01-02T15:04:05.000000Z"} \[%{NOTSPACE}\]:\s+➤ %{CONTINUATION}
+TIMESTAMP_SN %{YEAR}-%{MONTHNUM}-%{MONTHDAY}T%{HOUR}:%{MINUTE}:\d\d\.\d\d\d\d\d\dZ
+CONTINUATION (%{STATE}|%{GREEDYDATA:remaining:drop})
+STATE %{NODE_ID2} %{WORD2} (%{BOOTSTRAPPING}|%{JOINING}|%{JOINED})
+BOOTSTRAPPING a new node\.
+JOINING as a new node.*
+JOINED the network!
+WORD2 %{WORD:state:string}
+NODE_ID2 %{NODE_ID:node_id:string}
+NODE_ID [0-9a-fA-F]{6}\.\.
+'''
+
+  ## multiline parser/codec
+  ## https://www.elastic.co/guide/en/logstash/2.4/plugins-filters-multiline.html
+  [inputs.tail.multiline]
+    pattern = '^\s+➤'
+    # match_which_line = "previous"
+    # invert_match = false
+    # timeout = 5s
+
+#[[outputs.influxdb_v2]]
+#  urls = ["http://influxdb:8086"]
+#  token = "GYQamYfyV46350EY0EBw7bVPUzVQGXz6qUEGkV3BFdchJJ0IPOn1xTpV-HkhJV3NaJ-Jb1MGi9w_Zk9gmcaL1w=="
+#  organization = "MyOrg"
+#  bucket = "SN"
+  # bucket_tag = ""
+  # exclude_bucket_tag = false
+  # timeout = "5s"
+  # http_headers = {"X-Special-Header" = "Special-Value"}
+  # http_proxy = "http://corporate.proxy:3128"
+  # user_agent = "telegraf"
+  # content_encoding = "gzip"
+  # influx_uint_support = false
+  # tls_ca = "/etc/telegraf/ca.pem"
+  # tls_cert = "/etc/telegraf/cert.pem"
+  # tls_key = "/etc/telegraf/key.pem"
+  # insecure_skip_verify = false
+
+# Uncomment for testing
+[[outputs.file]]
+  files = ["stdout"]
