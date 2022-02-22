@@ -3,7 +3,6 @@ services:
   # Activate telegraf with its configuration file
   telegraf:
     image: telegraf:latest
-    # Add --test for debugging
     entrypoint: telegraf --config /etc/telegraf/telegraf.toml --debug
     deploy:
       replicas: 1
@@ -12,8 +11,11 @@ services:
     networks:
       - influxdb_net
     volumes:
-      - ./telegraf:/etc/telegraf/
-      - ./logs:/logs
+      - ./telegraf/:/etc/telegraf/
+      # Select one test case:
+      # ./logs-local-0/:/logs # Genesis
+      # ./logs-local-1/:/logs # Elder
+      - ./logs-local-8/:/logs # Adult
 networks:
   influxdb_net:
     external: true

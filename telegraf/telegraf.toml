@@ -1,12 +1,20 @@
+# Interesting links:
+# - https://docs.influxdata.com/telegraf/v1.21/administration/configuration/#agent-configuration
+# - https://github.com/influxdata/telegraf/tree/master/plugins/inputs/tail
+# - https://github.com/influxdata/telegraf/tree/master/plugins/parsers/grok
+# - https://github.com/vjeantet/grok/blob/master/patterns/grok-patterns
+# - https://github.com/influxdata/telegraf/blob/master/plugins/parsers/grok/influx_patterns.go
+# - https://grokdebug.herokuapp.com/
+
 [agent]
   omit_hostname = true
 
 [global_tags]
-  network = "mynet 02/18"
-  node = "node 01"
+  network = "mynet"
+  node = "mynode"
 
 [[inputs.tail]]
-  files = ["/logs/sn_node.log", "/logs/sn_node.log.*"]
+  files = ["/logs/sn_node.log.*", "/logs/sn_node.log"]
   from_beginning = true
   # watch_method = "inotify"
   # max_undelivered_lines = 1000
@@ -14,21 +22,43 @@
   data_format = "grok"
   path_tag = ""
   grok_patterns = ["%{HEADER_LINE}"]
-  # %{TIMESTAMP:ts:timestamp} \[%{DATA}\]:
-  # -"2006-01-02 15:04:05.000000"
-  # -"2006-01-02 15:04:05.000"
-  # \[%{NOTSPACE}\]:
   grok_custom_patterns = '''
-HEADER_LINE %{LOGLEVEL} %{TIMESTAMP_SN:timestamp:ts-"2006-01-02T15:04:05.000000Z"} \[%{NOTSPACE}\]:\s+➤ %{CONTINUATION}
-TIMESTAMP_SN %{YEAR}-%{MONTHNUM}-%{MONTHDAY}T%{HOUR}:%{MINUTE}:\d\d\.\d\d\d\d\d\dZ
-CONTINUATION (%{STATE}|%{GREEDYDATA:remaining:drop})
-STATE %{NODE_ID2} %{WORD2} (%{BOOTSTRAPPING}|%{JOINING}|%{JOINED})
-BOOTSTRAPPING a new node\.
-JOINING as a new node.*
-JOINED the network!
-WORD2 %{WORD:state:string}
-NODE_ID2 %{NODE_ID:node_id:string}
-NODE_ID [0-9a-fA-F]{6}\.\.
+    # General structure: header line + continuation lines
+    HEADER_LINE %{LOGLEVEL} %{TIMESTAMP_SN:timestamp:ts-"2006-01-02T15:04:05.000000Z"} \[%{NOTSPACE}\]:\s+➤ %{CONTINUATION}
+
+    # Timesatmp structure
+    TIMESTAMP_SN %{YEAR}-%{MONTHNUM}-%{MONTHDAY}T%{HOUR}:%{MINUTE}:\d\d\.\d\d\d\d\d\dZ
+
+    # Types of lines analyzed, the last one is a fallback to ignore other lines
+    CONTINUATION (%{ELDER}|%{STATE}|%{RESOURCE}|%{CHUNKS}|%{GREEDYDATA:remaining:drop})
+
+    # sn_node resource usage (memory, cpu, disk, and prefix)
+    RESOURCE %{GREEDYDATA}➤ Node resource usage: Process { memory: %{NONNEGINT:memory:int}, virtual_memory: %{NONNEGINT:virtual_memory:int}, cpu_usage: %{NUMBER:cpu_usage:float}, disk_usage: DiskUsage { total_written_bytes: %{NONNEGINT:total_written_bytes:int}, written_bytes: %{NONNEGINT:written_bytes:int}, total_read_bytes: %{NONNEGINT:total_read_bytes:int}, read_bytes: %{NONNEGINT:read_bytes:int} } } prefix="%{NODE_ID:prefix:drop}"
+
+    # Node states. Note that:
+    # - "Genesis" overiddes a preceeding "Elder" state (a few µs later)
+    # - "Joined", "Genesis" and "Demoted" are all adults
+    # TODO: "Demoted"
+    STATE %{NODE_ID:node_id:string} %{WORD:state:string} (%{BOOTSTRAPPING}|%{JOINING}|%{JOINED}|%{GENESIS})
+    BOOTSTRAPPING a new node\.
+    JOINING as a new node.*
+    JOINED the network!
+    GENESIS node started!.*
+
+    # Different field name (state2) because if state is reused this pattern is never matched
+    ELDER %{GREEDYDATA}➤ PromotedTo%{WORD_END:state2:string}.*
+
+    # Chunk management by adults
+    # Here also different field names are needed (chunk + chunk2)
+    # TODO: "Removing" and "Already exists"
+    CHUNKS %{GREEDYDATA}➤ (%{STORED}|%{GETTING})
+    STORED %{WORD_BEGIN:chunk:string}NewChunk
+    GETTING %{WORD:chunk2:string} chunk ChunkAddress.*
+
+    # Internal patterns
+    WORD_END \w+\b
+    WORD_BEGIN \b\w+
+    NODE_ID [0-9a-fA-F]{6}\.\.
 '''
 
   ## multiline parser/codec
@@ -39,11 +69,20 @@ NODE_ID [0-9a-fA-F]{6}\.\.
     # invert_match = false
     # timeout = 5s
 
-#[[outputs.influxdb_v2]]
-#  urls = ["http://influxdb:8086"]
-#  token = "GYQamYfyV46350EY0EBw7bVPUzVQGXz6qUEGkV3BFdchJJ0IPOn1xTpV-HkhJV3NaJ-Jb1MGi9w_Zk9gmcaL1w=="
-#  organization = "MyOrg"
-#  bucket = "SN"
+# Rename the fields that we were forced to add to make some patterns work (state2, chunk2)
+[[processors.rename]]
+  [[processors.rename.replace]]
+    field = "state2"
+    dest = "state"
+  [[processors.rename.replace]]
+    field = "chunk2"
+    dest = "chunk"
+
+[[outputs.influxdb_v2]]
+  urls = ["http://influxdb:8086"]
+  token = "GYQamYfyV46350EY0EBw7bVPUzVQGXz6qUEGkV3BFdchJJ0IPOn1xTpV-HkhJV3NaJ-Jb1MGi9w_Zk9gmcaL1w=="
+  organization = "MyOrg"
+  bucket = "SN"
   # bucket_tag = ""
   # exclude_bucket_tag = false
   # timeout = "5s"
@@ -57,6 +96,7 @@ NODE_ID [0-9a-fA-F]{6}\.\.
   # tls_key = "/etc/telegraf/key.pem"
   # insecure_skip_verify = false
 
-# Uncomment for testing
-[[outputs.file]]
-  files = ["stdout"]
+# Uncomment for testing (and comment out [[outputs.influxdb_v2]])
+# This method is better than adding --test argument to telegraf because the latter doesn't display all metrics
+#[[outputs.file]]
+#  files = ["stdout"]
