@@ -30,10 +30,17 @@
     TIMESTAMP_SN %{YEAR}-%{MONTHNUM}-%{MONTHDAY}T%{HOUR}:%{MINUTE}:\d\d\.\d\d\d\d\d\dZ
 
     # Types of lines analyzed, the last one is a fallback to ignore other lines
-    CONTINUATION (%{ELDER}|%{STATE}|%{RESOURCE}|%{CHUNKS}|%{GREEDYDATA:remaining:drop})
+    CONTINUATION (%{ELDER}|%{STATE}|%{RESOURCE}|%{CHUNKS}|%{AGE}|%{USED_SPACE}|%{MAX_CAPACITY}|%{GREEDYDATA:remaining:drop})
 
-    # sn_node resource usage (memory, cpu, disk, and prefix)
+    # sn_node resource usage (memory, cpu, disk)
     RESOURCE %{GREEDYDATA}➤ Node resource usage: Process { memory: %{NONNEGINT:memory:int}, virtual_memory: %{NONNEGINT:virtual_memory:int}, cpu_usage: %{NUMBER:cpu_usage:float}, disk_usage: DiskUsage { total_written_bytes: %{NONNEGINT:total_written_bytes:int}, written_bytes: %{NONNEGINT:written_bytes:int}, total_read_bytes: %{NONNEGINT:total_read_bytes:int}, read_bytes: %{NONNEGINT:read_bytes:int} } } prefix="%{NODE_ID:prefix:drop}"
+
+    # Node age
+    AGE Our AGE: %{NONNEGINT:age:int}
+
+    # Used space and max capacity
+    USED_SPACE %{GREEDYDATA}➤ Used space: %{NONNEGINT:used_space:int}
+    MAX_CAPACITY %{GREEDYDATA}➤ Max capacity: %{NONNEGINT:max_capacity:int}
 
     # Node states. Note that:
     # - "Genesis" overiddes a preceeding "Elder" state (a few µs later)
