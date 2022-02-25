@@ -13,9 +13,10 @@ services:
     volumes:
       - ./telegraf/:/etc/telegraf/
       # Select one test case:
-      # ./logs-local-0/:/logs # Genesis
-      # ./logs-local-1/:/logs # Elder
-      - ./logs-local-8/:/logs # Adult
+      # ./logs-local-0/:/logs # Saved Genesis
+      # ./logs-local-1/:/logs # Saved Elder
+      # ./logs-local-8/:/logs # Saved Adult
+      - ../docker_tmp/logs/8/:/logs # Running Adult
 networks:
   influxdb_net:
     external: true
