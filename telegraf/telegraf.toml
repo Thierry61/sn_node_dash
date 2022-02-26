@@ -32,7 +32,7 @@
     CONTINUATION (%{ELDER}|%{STATE}|%{RESOURCE}|%{CHUNKS}|%{AGE}|%{USED_SPACE}|%{MAX_CAPACITY}|%{GREEDYDATA:remaining:drop})
 
     # sn_node resource usage (memory, cpu, disk)
-    RESOURCE %{GREEDYDATA}➤ Node resource usage: Process { memory: %{NONNEGINT:memory:int}, virtual_memory: %{NONNEGINT:virtual_memory:int}, cpu_usage: %{NUMBER:cpu_usage:float}, disk_usage: DiskUsage { total_written_bytes: %{NONNEGINT:total_written_bytes:int}, written_bytes: %{NONNEGINT:written_bytes:int}, total_read_bytes: %{NONNEGINT:total_read_bytes:int}, read_bytes: %{NONNEGINT:read_bytes:int} } } prefix="%{NODE_ID:prefix:drop}"
+    RESOURCE %{GREEDYDATA}➤ Node resource usage: Process { memory: %{NONNEGINT:memory:int}, virtual_memory: %{NONNEGINT:virtual_memory:int}, cpu_usage: %{NUMBER:cpu_usage:float}, disk_usage: DiskUsage { total_written_bytes: %{NONNEGINT:total_written_bytes:int}, written_bytes: %{NONNEGINT:written_bytes:int}, total_read_bytes: %{NONNEGINT:total_read_bytes:int}, read_bytes: %{NONNEGINT:read_bytes:int} } } prefix="%{PREFIX:prefix:string}"
 
     # Node age
     AGE Our AGE: %{NONNEGINT:age:int}
@@ -69,6 +69,7 @@
     WORD_END \w+\b
     WORD_BEGIN \b\w+
     NODE_ID [0-9a-fA-F]{6}\.\.
+    PREFIX \([01]*\)
 '''
 
   ## multiline parser/codec
