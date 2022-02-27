@@ -1,0 +1,424 @@
+[
+    {
+        "apiVersion": "influxdata.com/v2alpha1",
+        "kind": "Dashboard",
+        "metadata": {
+            "name": "youthful-lamport-857001"
+        },
+        "spec": {
+            "charts": [
+                {
+                    "colors": [
+                        {
+                            "id": "base",
+                            "name": "laser",
+                            "type": "text",
+                            "hex": "#00C9FF"
+                        }
+                    ],
+                    "decimalPlaces": 2,
+                    "height": 1,
+                    "kind": "Single_Stat",
+                    "name": "State",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: 2022-01-01T00:00:00Z, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")"
+                        }
+                    ],
+                    "staticLegend": {},
+                    "width": 1
+                },
+                {
+                    "colors": [
+                        {
+                            "id": "base",
+                            "name": "laser",
+                            "type": "text",
+                            "hex": "#00C9FF"
+                        }
+                    ],
+                    "decimalPlaces": 2,
+                    "height": 1,
+                    "kind": "Single_Stat",
+                    "name": "Node id",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: 2022-01-01T00:00:00Z, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"node_id\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")"
+                        }
+                    ],
+                    "staticLegend": {},
+                    "width": 1,
+                    "yPos": 1
+                },
+                {
+                    "axes": [
+                        {
+                            "base": "10",
+                            "name": "x",
+                            "scale": "linear"
+                        },
+                        {
+                            "base": "10",
+                            "name": "y",
+                            "scale": "linear"
+                        }
+                    ],
+                    "colorMapping": {},
+                    "colorizeRows": true,
+                    "colors": [
+                        {
+                            "id": "z9FtnDTrL0CWblVM5Of7x",
+                            "name": "Ectoplasm",
+                            "type": "scale",
+                            "hex": "#DA6FF1"
+                        },
+                        {
+                            "id": "JcjRYjkhWOCxMASCKeCh2",
+                            "name": "Ectoplasm",
+                            "type": "scale",
+                            "hex": "#00717A"
+                        },
+                        {
+                            "id": "zjPy6w1hyKveOcBny4cUK",
+                            "name": "Ectoplasm",
+                            "type": "scale",
+                            "hex": "#ACFF76"
+                        }
+                    ],
+                    "geom": "line",
+                    "height": 3,
+                    "hoverDimension": "auto",
+                    "kind": "Xy",
+                    "legendColorizeRows": true,
+                    "legendOpacity": 1,
+                    "legendOrientationThreshold": 100000000,
+                    "name": "Write and Read KB",
+                    "opacity": 1,
+                    "orientationThreshold": 100000000,
+                    "position": "overlaid",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"written_bytes\")\r\n  |> map(fn: (r) => ({r with _value: r._value / 1000} ))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")"
+                        },
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"read_bytes\")\r\n  |> map(fn: (r) => ({r with _value: r._value / 1000} ))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")"
+                        }
+                    ],
+                    "staticLegend": {
+                        "colorizeRows": true,
+                        "opacity": 1,
+                        "orientationThreshold": 100000000,
+                        "widthRatio": 1
+                    },
+                    "width": 7,
+                    "widthRatio": 1,
+                    "xCol": "_time",
+                    "yCol": "_value",
+                    "yPos": 2
+                },
+                {
+                    "axes": [
+                        {
+                            "name": "x"
+                        },
+                        {
+                            "name": "y"
+                        }
+                    ],
+                    "colors": [
+                        {
+                            "hex": "#DA6FF1"
+                        },
+                        {
+                            "hex": "#00717A"
+                        },
+                        {
+                            "hex": "#ACFF76"
+                        }
+                    ],
+                    "height": 1,
+                    "kind": "Scatter",
+                    "legendColorizeRows": true,
+                    "legendOpacity": 1,
+                    "legendOrientationThreshold": 100000000,
+                    "name": "Store",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"chunk\")\r\n  |> filter(fn: (r) => r[\"_value\"] == \"Stored\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)"
+                        }
+                    ],
+                    "staticLegend": {},
+                    "width": 7,
+                    "xCol": "_time",
+                    "yCol": "_start",
+                    "yPos": 5
+                },
+                {
+                    "axes": [
+                        {
+                            "name": "x"
+                        },
+                        {
+                            "name": "y"
+                        }
+                    ],
+                    "colors": [
+                        {
+                            "hex": "#74D495"
+                        },
+                        {
+                            "hex": "#4949EA"
+                        },
+                        {
+                            "hex": "#FF4D9E"
+                        }
+                    ],
+                    "height": 1,
+                    "kind": "Scatter",
+                    "legendColorizeRows": true,
+                    "legendOpacity": 1,
+                    "legendOrientationThreshold": 100000000,
+                    "name": "Get",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"chunk\")\r\n  |> filter(fn: (r) => r[\"_value\"] == \"Getting\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)"
+                        }
+                    ],
+                    "staticLegend": {},
+                    "width": 7,
+                    "xCol": "_time",
+                    "yCol": "_start",
+                    "yPos": 6
+                },
+                {
+                    "axes": [
+                        {
+                            "name": "x"
+                        },
+                        {
+                            "name": "y"
+                        }
+                    ],
+                    "colors": [
+                        {
+                            "hex": "#FDC44F"
+                        },
+                        {
+                            "hex": "#007C76"
+                        },
+                        {
+                            "hex": "#8983FF"
+                        }
+                    ],
+                    "height": 1,
+                    "kind": "Scatter",
+                    "legendColorizeRows": true,
+                    "legendOpacity": 1,
+                    "legendOrientationThreshold": 100000000,
+                    "name": "Error",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"chunk\")\r\n  |> filter(fn: (r) => r[\"_value\"] == \"ERROR\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)"
+                        }
+                    ],
+                    "staticLegend": {},
+                    "width": 7,
+                    "xCol": "_time",
+                    "yCol": "_start",
+                    "yPos": 7
+                },
+                {
+                    "colors": [
+                        {
+                            "id": "base",
+                            "name": "laser",
+                            "type": "text",
+                            "hex": "#00C9FF"
+                        }
+                    ],
+                    "decimalPlaces": 0,
+                    "height": 1,
+                    "kind": "Single_Stat",
+                    "name": "Age",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: 2022-01-01T00:00:00Z, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"age\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")"
+                        }
+                    ],
+                    "staticLegend": {},
+                    "width": 1,
+                    "xPos": 1
+                },
+                {
+                    "colors": [
+                        {
+                            "id": "base",
+                            "name": "laser",
+                            "type": "text",
+                            "hex": "#00C9FF"
+                        }
+                    ],
+                    "decimalPlaces": 2,
+                    "height": 1,
+                    "kind": "Single_Stat",
+                    "name": "Prefix",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"prefix\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")"
+                        }
+                    ],
+                    "staticLegend": {},
+                    "width": 1,
+                    "xPos": 1,
+                    "yPos": 1
+                },
+                {
+                    "colors": [
+                        {
+                            "id": "base",
+                            "name": "laser",
+                            "type": "text",
+                            "hex": "#00C9FF"
+                        }
+                    ],
+                    "decimalPlaces": 0,
+                    "height": 1,
+                    "kind": "Single_Stat",
+                    "name": "Used space MB",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"used_space\")\r\n  |> map(fn: (r) => ({r with _value: r._value / 1000000} ))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")"
+                        }
+                    ],
+                    "staticLegend": {},
+                    "width": 1,
+                    "xPos": 2
+                },
+                {
+                    "colors": [
+                        {
+                            "id": "base",
+                            "name": "laser",
+                            "type": "text",
+                            "hex": "#00C9FF"
+                        }
+                    ],
+                    "decimalPlaces": 0,
+                    "height": 1,
+                    "kind": "Single_Stat",
+                    "name": "Max capacity MB",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"max_capacity\")\r\n  |> map(fn: (r) => ({r with _value: r._value / 1000000} ))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")"
+                        }
+                    ],
+                    "staticLegend": {},
+                    "width": 1,
+                    "xPos": 2,
+                    "yPos": 1
+                },
+                {
+                    "axes": [
+                        {
+                            "base": "10",
+                            "name": "x",
+                            "scale": "linear"
+                        },
+                        {
+                            "base": "10",
+                            "name": "y",
+                            "scale": "linear"
+                        }
+                    ],
+                    "colorizeRows": true,
+                    "colors": [
+                        {
+                            "id": "base",
+                            "name": "laser",
+                            "type": "text",
+                            "hex": "#00C9FF"
+                        }
+                    ],
+                    "decimalPlaces": 2,
+                    "height": 2,
+                    "hoverDimension": "auto",
+                    "kind": "Single_Stat_Plus_Line",
+                    "legendColorizeRows": true,
+                    "legendOpacity": 1,
+                    "legendOrientationThreshold": 100000000,
+                    "name": "CPU %",
+                    "opacity": 1,
+                    "orientationThreshold": 100000000,
+                    "position": "overlaid",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"cpu_usage\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")"
+                        }
+                    ],
+                    "staticLegend": {
+                        "colorizeRows": true,
+                        "opacity": 1,
+                        "orientationThreshold": 100000000,
+                        "widthRatio": 1
+                    },
+                    "width": 2,
+                    "widthRatio": 1,
+                    "xCol": "_time",
+                    "xPos": 3,
+                    "yCol": "_value"
+                },
+                {
+                    "axes": [
+                        {
+                            "base": "10",
+                            "name": "x",
+                            "scale": "linear"
+                        },
+                        {
+                            "base": "10",
+                            "name": "y",
+                            "scale": "linear"
+                        }
+                    ],
+                    "colorizeRows": true,
+                    "colors": [
+                        {
+                            "id": "base",
+                            "name": "laser",
+                            "type": "text",
+                            "hex": "#00C9FF"
+                        }
+                    ],
+                    "decimalPlaces": 0,
+                    "height": 2,
+                    "hoverDimension": "auto",
+                    "kind": "Single_Stat_Plus_Line",
+                    "legendColorizeRows": true,
+                    "legendOpacity": 1,
+                    "legendOrientationThreshold": 100000000,
+                    "name": "Memory MB",
+                    "opacity": 1,
+                    "orientationThreshold": 100000000,
+                    "position": "overlaid",
+                    "queries": [
+                        {
+                            "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == v.Node)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"memory\")\r\n  |> map(fn: (r) => ({r with _value: r._value / 1000} ))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")"
+                        }
+                    ],
+                    "staticLegend": {
+                        "colorizeRows": true,
+                        "opacity": 1,
+                        "orientationThreshold": 100000000,
+                        "widthRatio": 1
+                    },
+                    "width": 2,
+                    "widthRatio": 1,
+                    "xCol": "_time",
+                    "xPos": 5,
+                    "yCol": "_value"
+                }
+            ],
+            "name": "Node monitor"
+        }
+    }
+]
