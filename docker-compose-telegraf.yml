@@ -3,6 +3,15 @@ services:
   # Activate telegraf with its configuration file
   telegraf:
     image: telegraf:latest
+    environment:
+      # Common parameters
+      - node_name=mynode
+      - logs_path=/logs
+      - bucket=SN
+      # Local InfluxDB OSS parameters (to be overridden with Influx DB Cloud)
+      - url=http://influxdb:8086
+      - token=GYQamYfyV46350EY0EBw7bVPUzVQGXz6qUEGkV3BFdchJJ0IPOn1xTpV-HkhJV3NaJ-Jb1MGi9w_Zk9gmcaL1w==
+      - organization=MyOrg
     entrypoint: telegraf --config /etc/telegraf/telegraf.toml --debug
     deploy:
       replicas: 1

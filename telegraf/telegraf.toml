@@ -10,10 +10,10 @@
   omit_hostname = true
 
 [global_tags]
-  node = "mynode"
+  node = "${node_name}"
 
 [[inputs.tail]]
-  files = ["/logs/sn_node.log.*", "/logs/sn_node.log"]
+  files = ["${logs_path}/sn_node.log.*", "${logs_path}/sn_node.log"]
   from_beginning = true
   # watch_method = "inotify"
   # max_undelivered_lines = 1000
@@ -93,10 +93,10 @@
     dest = "chunk"
 
 [[outputs.influxdb_v2]]
-  urls = ["http://influxdb:8086"]
-  token = "GYQamYfyV46350EY0EBw7bVPUzVQGXz6qUEGkV3BFdchJJ0IPOn1xTpV-HkhJV3NaJ-Jb1MGi9w_Zk9gmcaL1w=="
-  organization = "MyOrg"
-  bucket = "SN"
+  urls = ["${url}"]
+  token = "${token}"
+  organization = "${organization}"
+  bucket = "${bucket}"
   # bucket_tag = ""
   # exclude_bucket_tag = false
   # timeout = "5s"
