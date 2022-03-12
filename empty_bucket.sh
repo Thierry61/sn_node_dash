@@ -1,8 +1,12 @@
-# - Works on local InfluxDB OSS
-# - Get "unauthorized access" message on InfluxDB cloud (changed host, org, token and removed port number)
-# => The simplest workaround in this case is to delete and recreate SN bucket in InfluxDB UI
-curl --request POST "http://localhost:8086/api/v2/delete?org=MyOrg&bucket=SN" \
-  --header 'Authorization: Token GYQamYfyV46350EY0EBw7bVPUzVQGXz6qUEGkV3BFdchJJ0IPOn1xTpV-HkhJV3NaJ-Jb1MGi9w_Zk9gmcaL1w==' \
+# Empty an InfluxDb bucket.
+# Works on both local InfluxDB OSS and InfluxDB Cloud with appropriate environment variables
+# (bucket, url, token, organization)
+
+# Define needed environment variables
+. env.sh
+
+curl --request POST "$url/api/v2/delete?org=$organization&bucket=$bucket" \
+  --header "Authorization: Token $token" \
   --header 'Content-Type: application/json' \
   --data '{
     "start": "1970-01-01T00:00:00Z",
