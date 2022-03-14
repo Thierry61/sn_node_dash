@@ -29,4 +29,4 @@ Useful commands:
 - To empty SN bucket: `./empty_bucket.sh`
 - Useful range dates for my static test cases:
   - for logs-local-*: from 22022-02-21 22:51:00 to 2022-02-21 23:02:00
-  - for ../docker_tmp/logs/*: from 2022-02-26 10:45:30 to 2022-02-26 10:55:32
+  - for ../docker_tmp/logs/*: from 2022-03-14 20:24:42 to 2022-03-14 20:32:44
