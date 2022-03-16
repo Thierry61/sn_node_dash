@@ -32,7 +32,7 @@
     CONTINUATION (%{ELDER}|%{STATE}|%{RESOURCE}|%{CHUNKS}|%{AGE}|%{USED_SPACE}|%{MAX_CAPACITY}|%{GREEDYDATA:remaining:drop})
 
     # sn_node resource usage (memory, cpu, disk, prefix)
-    RESOURCE %{GREEDYDATA}➤ Node resource usage: Process { memory: %{NONNEGINT:memory:int}, virtual_memory: %{NONNEGINT:virtual_memory:int}, cpu_usage: %{NUMBER:cpu_usage:float}, disk_usage: DiskUsage { total_written_bytes: %{NONNEGINT:total_written_bytes:int}, written_bytes: %{NONNEGINT:written_bytes:int}, total_read_bytes: %{NONNEGINT:total_read_bytes:int}, read_bytes: %{NONNEGINT:read_bytes:int} } } prefix="\(Prefix%{PREFIX:prefix:string}\)"
+    RESOURCE %{GREEDYDATA}➤ \(Prefix%{PREFIX:prefix:string}\): Node resource usage: Process { memory: %{NONNEGINT:memory:int}, virtual_memory: %{NONNEGINT:virtual_memory:int}, cpu_usage: %{NUMBER:cpu_usage:float}, disk_usage: DiskUsage { total_written_bytes: %{NONNEGINT:total_written_bytes:int}, written_bytes: %{NONNEGINT:written_bytes:int}, total_read_bytes: %{NONNEGINT:total_read_bytes:int}, read_bytes: %{NONNEGINT:read_bytes:int} } }
 
     # Node age
     AGE Our AGE: %{NONNEGINT:age:int}
