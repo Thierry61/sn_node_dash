@@ -57,9 +57,10 @@
     # Chunk management by adults
     # Here also different field names are needed (chunk + chunk2)
     # TODO: "Removing" and "Already exists"
-    CHUNKS %{GREEDYDATA}➤ (%{STORED}|%{GETTING})
+    CHUNKS %{GREEDYDATA}➤ (%{STORED}|%{GETTING}|%{EDITING})
     STORED %{WORD_BEGIN:chunk:string}NewChunk
     GETTING %{WORD:chunk2:string} chunk ChunkAddress.*
+    EDITING %{WORD:chunk4:string} Register success!
 
     # Error line. Not a chunk but managed the same way (events displayed in a scatter)
     ERROR_LINE %{ERROR:chunk3:string} %{TIMESTAMP_SN:timestamp:ts-"2006-01-02T15:04:05.000000Z"} %{GREEDYDATA:remaining:drop}
@@ -80,7 +81,7 @@
     # invert_match = false
     # timeout = 5s
 
-# Rename the fields that we were forced to add to make some patterns work (state2, chunk2)
+# Rename the fields that we were forced to add to make some patterns work (state2, chunk2, ...)
 [[processors.rename]]
   [[processors.rename.replace]]
     field = "state2"
@@ -90,6 +91,9 @@
     dest = "chunk"
   [[processors.rename.replace]]
     field = "chunk3"
+    dest = "chunk"
+  [[processors.rename.replace]]
+    field = "chunk4"
     dest = "chunk"
 
 [[outputs.influxdb_v2]]
