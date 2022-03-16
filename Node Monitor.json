@@ -93,14 +93,14 @@
         }
       },
       {
+        "datasource": "${DS_INFLUXDB_CLOUD}",
         "enable": false,
         "iconColor": "red",
         "name": "Edits",
         "target": {
           "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"chunk\")\r\n  |> filter(fn: (r) => r[\"_value\"] == \"Editing\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
           "refId": "Anno"
-        },
-        "datasource": "${DS_INFLUXDB_CLOUD}"
+        }
       }
     ]
   },
@@ -108,7 +108,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1647454465197,
+  "iteration": 1647472564102,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -674,7 +674,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_CLOUD}"
           },
-          "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"written_bytes\")\r\n  |> map(fn: (r) => ({r with _value: r._value / 1000000} ))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")\r\n",
+          "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"written_bytes\")\r\n  |> map(fn: (r) => ({r with _value: float(v: r._value) / 1000000.0} ))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")\r\n",
           "refId": "A"
         },
         {
@@ -683,7 +683,7 @@
             "uid": "${DS_INFLUXDB_CLOUD}"
           },
           "hide": false,
-          "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"read_bytes\")\r\n  |> map(fn: (r) => ({r with _value: r._value / 1000000} ))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")\r\n",
+          "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"read_bytes\")\r\n  |> map(fn: (r) => ({r with _value: float(v: r._value) / 1000000.0} ))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")\r\n",
           "refId": "B"
         }
       ],
@@ -691,6 +691,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_CLOUD}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -872,13 +876,13 @@
     ]
   },
   "time": {
-    "from": "2022-03-14T23:11:00.000Z",
-    "to": "2022-03-15T00:31:00.000Z"
+    "from": "2022-03-16T21:13:30.000Z",
+    "to": "2022-03-16T21:20:30.000Z"
   },
   "timepicker": {},
   "timezone": "utc",
   "title": "Node Monitor",
   "uid": "y4lclLYnz",
-  "version": 5,
+  "version": 2,
   "weekStart": ""
 }
