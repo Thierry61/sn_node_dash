@@ -96,7 +96,7 @@
         "datasource": "${DS_INFLUXDB_CLOUD}",
         "enable": false,
         "iconColor": "red",
-        "name": "Edits",
+        "name": "Updates",
         "target": {
           "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"chunk\")\r\n  |> filter(fn: (r) => r[\"_value\"] == \"Editing\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
           "refId": "Anno"
@@ -108,7 +108,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1647472564102,
+  "iteration": 1647641100833,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -619,6 +619,7 @@
               "mode": "off"
             }
           },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -663,8 +664,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "pluginVersion": "8.4.1",
@@ -737,12 +738,12 @@
                 "1": {
                   "color": "red",
                   "index": 3,
-                  "text": "Errors"
+                  "text": "Updates"
                 },
                 "2": {
-                  "color": "orange",
+                  "color": "purple",
                   "index": 2,
-                  "text": "Edits"
+                  "text": "Puts"
                 },
                 "3": {
                   "color": "green",
@@ -750,14 +751,16 @@
                   "text": "Gets"
                 },
                 "4": {
-                  "color": "purple",
+                  "color": "orange",
                   "index": 0,
-                  "text": "Puts"
+                  "text": "Errors"
                 }
               },
               "type": "value"
             }
           ],
+          "max": 4,
+          "min": 0.5,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -802,7 +805,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Edits mynode"
+              "options": "Updates"
             },
             "properties": [
               {
@@ -830,7 +833,7 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "none",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -841,10 +844,11 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_CLOUD}"
           },
-          "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"chunk\")\r\n  |> map(fn: (r) => ({ r with\r\n    _field: if r._value == \"Stored\" then \"Puts\" else if r._value == \"Editing\" then \"Edits\" else if r._value == \"Getting\" then \"Gets\" else \"Errors\",\r\n    _value: if r._value == \"Stored\" then 4 else if r._value == \"Editing\" then 2 else if r._value == \"Getting\" then 3 else 1 }))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
+          "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"chunk\")\r\n  |> map(fn: (r) => ({ r with\r\n    _field: if r._value == \"Stored\" then \"Puts\" else if r._value == \"Editing\" then \"Updates\" else if r._value == \"Getting\" then \"Gets\" else \"Errors\",\r\n    _value: if r._value == \"Stored\" then 2 else if r._value == \"Editing\" then 1 else if r._value == \"Getting\" then 3 else 4 }))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
           "refId": "A"
         }
       ],
+      "title": "Events",
       "type": "timeseries"
     }
   ],
@@ -883,6 +887,6 @@
   "timezone": "utc",
   "title": "Node Monitor",
   "uid": "y4lclLYnz",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }
