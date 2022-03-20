@@ -108,7 +108,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1647641100833,
+  "iteration": 1647785159443,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -152,7 +152,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^state mynode$/",
+          "fields": "/.*/",
           "values": false
         },
         "textMode": "auto"
@@ -164,7 +164,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_CLOUD}"
           },
-          "query": "from(bucket: \"SN\")\r\n  |> range(start: 2022-01-01T00:00:00Z, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "query": "from(bucket: \"SN\")\r\n  |> range(start: 2022-01-01T00:00:00Z, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> drop(fn: (column) => column == \"_time\")\r\n  |> yield(name: \"last\")",
           "refId": "A"
         }
       ],
@@ -210,7 +210,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^prefix mynode$/",
+          "fields": "/.*/",
           "values": false
         },
         "textMode": "auto"
@@ -222,7 +222,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_CLOUD}"
           },
-          "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"prefix\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"prefix\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> drop(fn: (column) => column == \"_time\")\r\n  |> yield(name: \"last\")",
           "refId": "A"
         }
       ],
@@ -456,7 +456,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_CLOUD}"
           },
-          "query": "from(bucket: \"SN\")\r\n  |> range(start: 2022-01-01T00:00:00Z, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"age\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "query": "from(bucket: \"SN\")\r\n  |> range(start: 2022-01-01T00:00:00Z, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"age\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> drop(fn: (column) => column == \"_time\")\r\n  |> yield(name: \"last\")",
           "refId": "A"
         }
       ],
@@ -502,7 +502,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^node_id mynode$/",
+          "fields": "/.*/",
           "values": false
         },
         "textMode": "auto"
@@ -514,7 +514,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_CLOUD}"
           },
-          "query": "from(bucket: \"SN\")\r\n  |> range(start: 2022-01-01T00:00:00Z, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"node_id\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "query": "from(bucket: \"SN\")\r\n  |> range(start: 2022-01-01T00:00:00Z, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"node_id\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> drop(fn: (column) => column == \"_time\")\r\n  |> yield(name: \"last\")",
           "refId": "A"
         }
       ],
@@ -880,13 +880,13 @@
     ]
   },
   "time": {
-    "from": "2022-03-16T21:13:30.000Z",
-    "to": "2022-03-16T21:20:30.000Z"
+    "from": "2022-03-20T13:36:00.000Z",
+    "to": "2022-03-20T13:45:00.000Z"
   },
   "timepicker": {},
   "timezone": "utc",
   "title": "Node Monitor",
   "uid": "y4lclLYnz",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }

@@ -5,7 +5,7 @@ services:
     image: telegraf:latest
     environment:
       # Common parameters
-      - node_name=mynode
+      - node_name=adult
       - logs_path=/logs
       - bucket=SN
       # Local InfluxDB OSS parameters (to be overridden with Influx DB Cloud)
@@ -22,7 +22,8 @@ services:
     volumes:
       - ./telegraf-data/:/etc/telegraf/
       # Select one test case:
-      - ../docker_tmp/logs/8/:/logs # Running Adult
+      # - ../docker_tmp/logs/1/:/logs # Elder
+      - ../docker_tmp/logs/8/:/logs # Adult
 networks:
   influxdb_net:
     external: true

@@ -27,4 +27,4 @@ There are 3 stacks each with one service:
 Useful commands:
 - To just relaunch telegraf agent: `docker stack rm telegraf && docker stack deploy -c docker-compose-telegraf.yml telegraf && sleep 2 && docker ps -a` and then `docker logs <container_id>` to observe telegraf agent own logs
 - To empty SN bucket: `./empty_bucket.sh`
-- Useful range dates for my static test cases for ../docker_tmp/logs/*: from 2022-03-16 21:13:30 to 2022-03-16 21:20:30
+- Useful range dates for my static test cases for ../docker_tmp/logs/*: from 2022-03-20 13:36:00 to 2022-03-20 13:45:00

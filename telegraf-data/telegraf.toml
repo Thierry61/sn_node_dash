@@ -29,7 +29,7 @@
     TIMESTAMP_SN %{YEAR}-%{MONTHNUM}-%{MONTHDAY}T%{HOUR}:%{MINUTE}:\d\d\.\d\d\d\d\d\dZ
 
     # Types of lines analyzed, the last one is a fallback to ignore other lines
-    CONTINUATION (%{ELDER}|%{STATE}|%{RESOURCE}|%{CHUNKS}|%{AGE}|%{USED_SPACE}|%{MAX_CAPACITY}|%{GREEDYDATA:remaining:drop})
+    CONTINUATION (%{ELDER}|%{DEMOTED}|%{STATE}|%{RESOURCE}|%{CHUNKS}|%{AGE}|%{USED_SPACE}|%{MAX_CAPACITY}|%{GREEDYDATA:remaining:drop})
 
     # sn_node resource usage (memory, cpu, disk, prefix)
     RESOURCE %{GREEDYDATA}➤ \(Prefix%{PREFIX:prefix:string}\): Node resource usage: Process { memory: %{NONNEGINT:memory:int}, virtual_memory: %{NONNEGINT:virtual_memory:int}, cpu_usage: %{NUMBER:cpu_usage:float}, disk_usage: DiskUsage { total_written_bytes: %{NONNEGINT:total_written_bytes:int}, written_bytes: %{NONNEGINT:written_bytes:int}, total_read_bytes: %{NONNEGINT:total_read_bytes:int}, read_bytes: %{NONNEGINT:read_bytes:int} } }
@@ -44,7 +44,6 @@
     # Node states. Note that:
     # - "Genesis" overiddes a preceeding "Elder" state (a few µs later)
     # - "Joined" are adults
-    # TODO: "Demoted"
     STATE %{NODE_ID:node_id:string} %{WORD:state:string} (%{BOOTSTRAPPING}|%{JOINING}|%{JOINED}|%{GENESIS})
     BOOTSTRAPPING a new node\.
     JOINING as a new node.*
@@ -52,7 +51,8 @@
     GENESIS node started!.*
 
     # Different field name (state2) because if state is reused this pattern is never matched
-    ELDER %{GREEDYDATA}➤ PromotedTo%{WORD_END:state2:string}.*
+    ELDER PromotedTo%{WORD_END:state2:string}.*
+    DEMOTED %{WORD_BEGIN:state3:string}FromElder
 
     # Chunk management by adults
     # Here also different field names are needed (chunk + chunk2)
@@ -60,7 +60,7 @@
     CHUNKS %{GREEDYDATA}➤ (%{STORED}|%{GETTING}|%{EDITING})
     STORED %{WORD_BEGIN:chunk:string}NewChunk
     GETTING %{WORD:chunk2:string} chunk ChunkAddress.*
-    EDITING %{WORD:chunk4:string} Register success!
+    EDITING %{WORD:chunk4:string} Register$
 
     # Error line. Not a chunk but managed the same way (events displayed in a scatter)
     ERROR_LINE %{ERROR:chunk3:string} %{TIMESTAMP_SN:timestamp:ts-"2006-01-02T15:04:05.000000Z"} %{GREEDYDATA:remaining:drop}
@@ -85,6 +85,9 @@
 [[processors.rename]]
   [[processors.rename.replace]]
     field = "state2"
+    dest = "state"
+  [[processors.rename.replace]]
+    field = "state3"
     dest = "state"
   [[processors.rename.replace]]
     field = "chunk2"
