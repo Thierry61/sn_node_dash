@@ -15,7 +15,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.4.3"
+      "version": "8.4.5"
     },
     {
       "type": "datasource",
@@ -108,7 +108,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1647785159443,
+  "iteration": 1649000305878,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -157,7 +157,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.3",
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "datasource": {
@@ -215,7 +215,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.3",
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "datasource": {
@@ -273,7 +273,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.3",
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "datasource": {
@@ -333,7 +333,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.3",
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "datasource": {
@@ -391,7 +391,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.3",
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "datasource": {
@@ -449,7 +449,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.3",
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "datasource": {
@@ -507,7 +507,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.3",
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "datasource": {
@@ -565,7 +565,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.3",
+      "pluginVersion": "8.4.5",
       "targets": [
         {
           "datasource": {
@@ -844,7 +844,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_CLOUD}"
           },
-          "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"chunk\")\r\n  |> map(fn: (r) => ({ r with\r\n    _field: if r._value == \"Stored\" then \"Puts\" else if r._value == \"Editing\" then \"Updates\" else if r._value == \"Getting\" then \"Gets\" else \"Errors\",\r\n    _value: if r._value == \"Stored\" then 2 else if r._value == \"Editing\" then 1 else if r._value == \"Getting\" then 3 else 4 }))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
+          "query": "from(bucket: \"SN\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tail\")\r\n  |> filter(fn: (r) => r[\"node\"] == \"${Node}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"chunk\")\r\n  |> map(fn: (r) => ({ r with\r\n    _field: if r._value == \"Stored\" then \"Puts\" else if r._value == \"Editing\" then \"Updates\" else if r._value == \"Getting\" then \"Gets\" else \"Errors\",\r\n    _value: if r._value == \"Stored\" then 2 else if r._value == \"Editing\" then 1 else if r._value == \"Getting\" then 3 else 4 }))\r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> drop(columns: [\"_start\", \"_stop\"])\r\n",
           "refId": "A"
         }
       ],
@@ -880,13 +880,13 @@
     ]
   },
   "time": {
-    "from": "2022-03-20T13:36:00.000Z",
-    "to": "2022-03-20T13:45:00.000Z"
+    "from": "2022-04-01T21:05:00.000Z",
+    "to": "2022-04-01T21:45:00.000Z"
   },
   "timepicker": {},
   "timezone": "utc",
   "title": "Node Monitor",
   "uid": "y4lclLYnz",
-  "version": 5,
+  "version": 3,
   "weekStart": ""
 }
